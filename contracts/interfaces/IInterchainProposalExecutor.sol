@@ -7,7 +7,7 @@ interface IInterchainProposalExecutor {
     event WhitelistedProposalCallerSet(string indexed sourceChain, address indexed sourceCaller, bool whitelisted);
 
     // An event emitted when the proposal sender is whitelisted
-    event WhitelistedProposalSenderSet(string indexed sourceChain, address indexed sourceSender, bool whitelisted);
+    event WhitelistedProposalSenderSet(string indexed sourceChain, string sourceSender, bool whitelisted);
 
     event ProposalExecuted(bytes32 indexed payloadHash);
 
@@ -26,7 +26,11 @@ interface IInterchainProposalExecutor {
      * @param sourceSender The source interchain sender address
      * @param whitelisted The whitelisted status
      */
-    function setWhitelistedProposalSender(string calldata sourceChain, address sourceSender, bool whitelisted) external;
+    function setWhitelistedProposalSender(
+        string calldata sourceChain,
+        string calldata sourceSender,
+        bool whitelisted
+    ) external;
 
     /**
      * @notice set the whitelisted status of a proposal caller which normally set to the `Timelock` contract address on the source chain

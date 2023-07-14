@@ -61,7 +61,10 @@ Replace `{sourceChain}`, `{sourceCallerAddress}`, and `{chainName}` with your re
 yarn task whitelistCaller {sourceChain} {sourceCallerAddress} --network {chainName}
 ```
 
-Note: the chain name is case-sensitive, you must use the following doc as a reference:
+Note:
+
+1. The chain name is case-sensitive, you must use the following doc as a reference:
+2. Please note that the `sourceSenderAddress` should be provided in a checksummed format, adhering to the [EIP-55 standard](https://eips.ethereum.org/EIPS/eip-55). This means the address should be in the following format: "0x440e65EAAb7A23be8b1a61108643B2cff2E5A967" with the correct capitalization, rather than "0x440e65eaab7a23be8b1a61108643b2cff2e5a967".
 
 - testnet: https://docs.axelar.dev/dev/reference/testnet-chain-names
 - mainnet: https://docs.axelar.dev/dev/reference/mainnet-chain-names
@@ -77,6 +80,7 @@ yarn deploy --tags DummyState --network {chainName}
 ```
 
 Example command:
+
 ```bash
 yarn deploy --tags DummyState --network polygon
 ```
@@ -95,6 +99,7 @@ yarn task executeDummyState {destinationChain} {message} --network {srcChainName
 ```
 
 Example command:
+
 ```bash
 yarn task executeDummyState Polygon "Hello From Avalanche" --network avalanche
 ```
@@ -110,6 +115,7 @@ yarn task readDummyState --network {destinationChain}
 ```
 
 Example command:
+
 ```bash
 yarn task readDummyState --network polygon
 ```

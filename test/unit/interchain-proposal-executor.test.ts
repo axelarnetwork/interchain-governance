@@ -11,12 +11,11 @@ import { chains } from '../../constants/chains';
 import { expect } from 'chai';
 import { Signer } from 'ethers';
 
-describe('Proposal Executor', function () {
+describe('InterchainProposalExecutor', function () {
   let executor: TestProposalExecutor;
   let signer: Signer;
   let signerAddress: string;
   let dummy: DummyState;
-  let gateway: IAxelarGateway;
 
   // redefine "slow" test for this test suite
   this.slow(10000);
@@ -38,11 +37,6 @@ describe('Proposal Executor', function () {
       await ethers.getContractFactory<DummyStateFactory>('DummyState');
 
     dummy = await dummyStateFactory.deploy();
-
-    gateway = await ethers.getContractAt<IAxelarGateway>(
-      'IAxelarGateway',
-      contracts[chains.hardhat].gateway,
-    );
   });
 
   describe('_execute', function () {
@@ -96,6 +90,8 @@ describe('Proposal Executor', function () {
             ),
           ),
         );
+
+
     });
 
     it('should revert properly when execution failed', async function () {
@@ -203,6 +199,52 @@ describe('Proposal Executor', function () {
         executor,
         'NotWhitelistedCaller',
       );
+    });
+  });
+
+  describe('setWhitelistedProposalCaller', () => {
+    it("should revert when the caller isn't the owner", async () => {
+      const [, signer2] = await ethers.getSigners();
+      await expect(
+        executor
+          .connect(signer2)
+          .setWhitelistedProposalCaller(chains.ethereum, signerAddress, true),
+      ).to.be.reverted;
+    });
+
+    it('should emit event when new caller is whitelisted', async () => {
+      await expect(
+        executor.setWhitelistedProposalCaller(
+          chains.ethereum,
+          signerAddress,
+          true,
+        ),
+      )
+        .to.emit(executor, 'WhitelistedProposalCallerSet')
+        .withArgs(chains.ethereum, signerAddress, true);
+    });
+  });
+
+  describe('setWhitelistedProposalSender', () => {
+    it("should revert when the caller isn't the owner", async () => {
+      const [, signer2] = await ethers.getSigners();
+      await expect(
+        executor
+          .connect(signer2)
+          .setWhitelistedProposalSender(chains.ethereum, signerAddress, true),
+      ).to.be.reverted;
+    });
+
+    it('should emit event when new sender is whitelisted', async () => {
+      await expect(
+        executor.setWhitelistedProposalSender(
+          chains.ethereum,
+          signerAddress,
+          true,
+        ),
+      )
+        .to.emit(executor, 'WhitelistedProposalSenderSet')
+        .withArgs(chains.ethereum, signerAddress, true);
     });
   });
 });

@@ -11,7 +11,7 @@ import { chains } from '../../constants/chains';
 import { expect } from 'chai';
 import { Signer } from 'ethers';
 
-describe('Interchain Governance Sender', function () {
+describe('InterchainProposalSender', function () {
   let sender: InterchainProposalSender;
   let signer: Signer;
   let signerAddress: string;

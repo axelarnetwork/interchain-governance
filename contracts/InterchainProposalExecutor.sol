@@ -2,7 +2,6 @@
 pragma solidity ^0.8.0;
 
 import { Ownable } from '@openzeppelin/contracts/access/Ownable.sol';
-import { StringToAddress } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/utils/AddressString.sol';
 import { AxelarExecutable } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/executable/AxelarExecutable.sol';
 import { IInterchainProposalExecutor } from './interfaces/IInterchainProposalExecutor.sol';
 import { InterchainCalls } from './lib/InterchainCalls.sol';
@@ -24,7 +23,7 @@ contract InterchainProposalExecutor is IInterchainProposalExecutor, AxelarExecut
     mapping(string => mapping(address => bool)) public whitelistedCallers;
 
     // Whitelisted proposal senders. The proposal sender is the `InterchainProposalSender` contract address at the source chain.
-    mapping(string => mapping(address => bool)) public whitelistedSenders;
+    mapping(string => mapping(string => bool)) public whitelistedSenders;
 
     constructor(address _gateway, address _owner) AxelarExecutable(_gateway) {
         _transferOwnership(_owner);
@@ -46,7 +45,7 @@ contract InterchainProposalExecutor is IInterchainProposalExecutor, AxelarExecut
         _beforeProposalExecuted(sourceChain, sourceAddress, payload);
 
         // Check that the source address is whitelisted
-        if (!whitelistedSenders[sourceChain][StringToAddress.toAddress(sourceAddress)]) {
+        if (!whitelistedSenders[sourceChain][sourceAddress]) {
             revert NotWhitelistedSourceAddress();
         }
 
@@ -109,7 +108,7 @@ contract InterchainProposalExecutor is IInterchainProposalExecutor, AxelarExecut
      */
     function setWhitelistedProposalSender(
         string calldata sourceChain,
-        address sourceSender,
+        string calldata sourceSender,
         bool whitelisted
     ) external override onlyOwner {
         whitelistedSenders[sourceChain][sourceSender] = whitelisted;
